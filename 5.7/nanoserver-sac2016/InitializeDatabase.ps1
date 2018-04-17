@@ -98,7 +98,7 @@ if (! $MYSQL_ROOT_PASSWORD -And $MYSQL_ALLOW_EMPTY_PASSWORD -ne "yes" -And $MYSQ
 
 # attach data files if they don't exist:
 if ((Test-Path 'c:\mysql\data\*') -eq $false) {
-  c:\mysql\bin\mysqld.exe --initialize-insecure --console --explicit_defaults_for_timestamp
+  Start-Process -FilePath c:\mysql\bin\mysqld.exe -ArgumentList '--initialize-insecure --console --explicit_defaults_for_timestamp' -Wait
   
   # start the service
   Write-Verbose 'Starting MySQL Server'

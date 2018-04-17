@@ -16,7 +16,13 @@ RUN mkdir docker-entrypoint-initdb.d
 
 # Download Links:
 ARG mysql_download_url="https://dev.mysql.com/get/Downloads/MySQL-5.6/mysql-5.6.39-winx64.zip"
-ARG vcredist_x86_download_url="http://download.microsoft.com/download/5/B/C/5BC5DBB3-652D-4DCE-B14A-475AB85EEF6E/vcredist_x86.exe"
+# To fetch the direct download link for vcredist:
+# First go to https://support.microsoft.com/en-us/help/2977003/the-latest-supported-visual-c-downloads
+# Follow the desired links until the download starts (you may cancel it). The current page will be something like this:
+# "https://www.microsoft.com/en-us/download/confirmation.aspx?id=26999&6B49FDFB-8E5B-4B07-BC31-15695C5A2143=1"
+# Reload that page and a prompt to re-select the vcredist version will be shown, along with a "click here to download manually" link
+# (Also the download will restart. Again, you may cancel it) Copy that link and put it here:
+ARG vcredist_x86_download_url="https://download.microsoft.com/download/1/6/5/165255E7-1014-4D0A-B094-B6A430A6BFFC/vcredist_x86.exe"
 
 RUN powershell -Command \
   $ErrorActionPreference = 'Stop' ; \

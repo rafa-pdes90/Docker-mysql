@@ -32,7 +32,7 @@ RUN Setx PATH /M %PATH%;c:\\mysql\\bin
 RUN powershell -Command \
   $ErrorActionPreference = 'Stop' ; \
   Rename-Item -Path 'c:\mysql\data' -NewName 'c:\mysql\data-default' ; \
-  c:\mysql\bin\mysqld.exe --install-manual MySQL
+  Start-Process -FilePath c:\mysql\bin\mysqld.exe -ArgumentList '--install-manual MySQL' -Wait
 
 VOLUME c:\\mysql\\data
 

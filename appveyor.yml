@@ -4,13 +4,13 @@ image: Visual Studio 2017
 environment:
   matrix:
     - version: 5.6
-      variant: windowsservercore-ltsc2016
+      variant: nanoserver-sac2016
     - version: 5.6
-      variant: nanoserver-sac2016
-    - version: 5.7
       variant: windowsservercore-ltsc2016
     - version: 5.7
       variant: nanoserver-sac2016
+    - version: 5.7
+      variant: windowsservercore-ltsc2016
 
 install:
   - ps: |

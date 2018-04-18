@@ -17,7 +17,7 @@ RUN mkdir docker-entrypoint-initdb.d
 # Download Links:
 ARG mysql_download_url="https://dev.mysql.com/get/Downloads/MySQL-5.6/mysql-5.6.39-winx64.zip"
 
-COPY vcredist_2010 C:/Windows/System32
+COPY vcredist_x64 C:/Windows/System32
 
 RUN powershell -Command \
   $ErrorActionPreference = 'Stop' ; \

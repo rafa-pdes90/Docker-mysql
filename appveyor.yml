@@ -18,7 +18,7 @@ environment:
 
 install:
   - ps: |
-      [Environment]::SetEnvironmentVariable('dockerImage', ('docker-mysql:{0}' -f $env:version), [EnvironmentVariableTarget]::Process);
+      [Environment]::SetEnvironmentVariable('dockerImage', ('rafaelpdes/mysql:{0}' -f $env:version), [EnvironmentVariableTarget]::Process);
       [Environment]::SetEnvironmentVariable('buildDirectory', ('{0}/{1}' -f $env:version, $env:variant), [EnvironmentVariableTarget]::Process);
 
 build_script:

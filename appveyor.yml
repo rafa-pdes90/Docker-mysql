@@ -1,35 +1,41 @@
 version: build-{build}.{branch}
+
+# branches to build
+branches:
+  # blacklist
+  except:
+    - master
+    
+# Skipping commits with particular message or from specific user
+skip_commits:
+  message: /wip/
+
 image: Visual Studio 2017
 
 environment:
   DOCKER_USER:
-    secure: "8ytgwuh2SNKTbSi+N8Mm0g=="
+    secure: 8ytgwuh2SNKTbSi+N8Mm0g==
   DOCKER_PASS:
-    secure: "/pXE9T3huXIXgID8jW1rfA=="
-  matrix:
-    - version: 5.6
-      variant: nanoserver-sac2016
-    - version: 5.6
-      variant: windowsservercore-ltsc2016
-      DOCKER_USER:
-        secure: "8ytgwuh2SNKTbSi+N8Mm0g=="
-      DOCKER_PASS:
-        secure: "/pXE9T3huXIXgID8jW1rfA=="
-    - version: 5.7
-      variant: nanoserver-sac2016
-    - version: 5.7
-      variant: windowsservercore-ltsc2016
+    secure: /pXE9T3huXIXgID8jW1rfA==
+  DOCKER_IMAGE_TAG_PREFIX: rafaelpdes/mysql
+  latest: 5.7.21-nanoserver
 
 install:
   - ps: |
-      [Environment]::SetEnvironmentVariable('dockerImage', ('rafaelpdes/mysql:{0}' -f $env:version), [EnvironmentVariableTarget]::Process);
-      [Environment]::SetEnvironmentVariable('buildDirectory', ('{0}/{1}' -f $env:version, $env:variant), [EnvironmentVariableTarget]::Process);
+      $v1,$v2,$release,$variant = $env:APPVEYOR_REPO_BRANCH.Split('.''-')
+      $version = "$v1.$v2"
+      [Environment]::SetEnvironmentVariable('dockerImage', ('{0}:{1}' -f $env:DOCKER_IMAGE_TAG_PREFIX, -f $env:APPVEYOR_REPO_BRANCH), [EnvironmentVariableTarget]::Process);
+      [Environment]::SetEnvironmentVariable('buildDirectory', ('{0}/{1}' -f $version, $variant), [EnvironmentVariableTarget]::Process);
 
 build_script:
   - cmd: appveyor-retry docker build --pull -t %dockerImage% %buildDirectory%
 
 after_build:
-  - ps: docker images
+  - ps: |
+      if ($env:APPVEYOR_REPO_BRANCH -eq $env:latest) {
+        docker tag "$env:dockerImage" "$env:DOCKER_IMAGE_TAG_PREFIX:latest"
+      }
+      docker images
 
 test_script:
   - cmd: docker run --rm %dockerImage% MySQL --version
@@ -37,4 +43,4 @@ test_script:
 deploy_script:
   - ps: |
       docker login -u="$env:DOCKER_USER" -p="$env:DOCKER_PASS"
-      docker push rafaelpdes/mysql
+      docker push "$env:DOCKER_IMAGE_TAG_PREFIX"

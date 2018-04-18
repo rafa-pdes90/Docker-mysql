@@ -18,11 +18,11 @@ environment:
   DOCKER_PASS:
     secure: /pXE9T3huXIXgID8jW1rfA==
   DOCKER_IMAGE_TAG_PREFIX: rafaelpdes/mysql
-  latest: 5.7.21-nanoserver
+  latest: 5.7.21-nanoserver-sac2016
 
 install:
   - ps: |
-      $v1,$v2,$release,$variant = $env:APPVEYOR_REPO_BRANCH.Split('.''-')
+      $v1,$v2,$release,$variant = $env:APPVEYOR_REPO_BRANCH.Split('.').Split('-', 2)
       $version = "$v1.$v2"
       [Environment]::SetEnvironmentVariable('dockerImage', ('{0}:{1}' -f $env:DOCKER_IMAGE_TAG_PREFIX, -f $env:APPVEYOR_REPO_BRANCH), [EnvironmentVariableTarget]::Process);
       [Environment]::SetEnvironmentVariable('buildDirectory', ('{0}/{1}' -f $version, $variant), [EnvironmentVariableTarget]::Process);

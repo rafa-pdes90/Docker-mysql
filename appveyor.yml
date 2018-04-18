@@ -1,10 +1,4 @@
 version: build-{build}.{branch}
-
-# branches to build
-branches:
-  # blacklist
-  except:
-    - master
     
 # Skipping commits with particular message or from specific user
 skip_commits:
@@ -18,13 +12,18 @@ environment:
   DOCKER_PASS:
     secure: /pXE9T3huXIXgID8jW1rfA==
   DOCKER_IMAGE_TAG_PREFIX: rafaelpdes/mysql
-  latest: 5.6.39-nanoserver-sac2016
+  LATEST: 5.7.21-nanoserver-sac2016
 
 install:
   - ps: |
-      $v1,$v2,$release,$variant = $env:APPVEYOR_REPO_BRANCH.Split('.').Split('-', 2)
+      if ($env:APPVEYOR_REPO_BRANCH -eq "master") {
+        $DOCKER_IMAGE_TAG_SUFFIX = $env.LATEST
+      } else {
+        $DOCKER_IMAGE_TAG_SUFFIX = $env:APPVEYOR_REPO_BRANCH
+      }
+      $v1,$v2,$release,$variant = $DOCKER_IMAGE_TAG_SUFFIX.Split('.').Split('-', 2)
       $version = "$v1.$v2"
-      [Environment]::SetEnvironmentVariable('dockerImage', ('{0}:{1}' -f $env:DOCKER_IMAGE_TAG_PREFIX, $env:APPVEYOR_REPO_BRANCH), [EnvironmentVariableTarget]::Process);
+      [Environment]::SetEnvironmentVariable('dockerImage', ('{0}:{1}' -f $env:DOCKER_IMAGE_TAG_PREFIX, $DOCKER_IMAGE_TAG_SUFFIX), [EnvironmentVariableTarget]::Process);
       [Environment]::SetEnvironmentVariable('buildDirectory', ('{0}/{1}' -f $version, $variant), [EnvironmentVariableTarget]::Process);
 
 build_script:
@@ -32,8 +31,8 @@ build_script:
 
 after_build:
   - ps: |
-      if ($env:APPVEYOR_REPO_BRANCH -eq $env:latest) {
-        docker tag "$env:dockerImage" "$env:DOCKER_IMAGE_TAG_PREFIX:latest"
+      if ($env:APPVEYOR_REPO_BRANCH -eq "master") {
+        docker tag "$env:dockerImage $env:DOCKER_IMAGE_TAG_PREFIX:latest"
       }
       docker images
 

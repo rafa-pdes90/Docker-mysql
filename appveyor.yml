@@ -31,7 +31,8 @@ test_script:
   - cmd: docker run --rm %dockerImage% MySQL --version
 
 deploy_script:
-  - echo $env:DOCKER_USER
-  - echo $env:DOCKER_PASS
+  - echo "$env:DOCKER_USER"
+  - echo "-secret $env:DOCKER_USER"
+  - echo -secret $env:DOCKER_USER
   - docker login -u="$env:DOCKER_USER" -p="$env:DOCKER_PASS"
   - docker push rafaelpdes/mysql

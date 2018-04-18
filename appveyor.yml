@@ -24,11 +24,11 @@ install:
         $DOCKER_IMAGE_TAG_SUFFIX = $env:APPVEYOR_REPO_BRANCH
       }
       
-      $v1,$v2,$env:release,$env:variant = $DOCKER_IMAGE_TAG_SUFFIX.Split('.').Split('-', 2)
-      $env:version = "$v1.$v2"
+      $v1,$v2,$env:RELEASE,$env:VARIANT = $DOCKER_IMAGE_TAG_SUFFIX.Split('.').Split('-', 2)
+      $env:VERSION = "$v1.$v2"
       
       [Environment]::SetEnvironmentVariable('dockerImage', ('{0}:{1}' -f $env:DOCKER_IMAGE_TAG_PREFIX, $DOCKER_IMAGE_TAG_SUFFIX), [EnvironmentVariableTarget]::Process);
-      [Environment]::SetEnvironmentVariable('buildDirectory', ('{0}/{1}' -f $version, $variant), [EnvironmentVariableTarget]::Process);
+      [Environment]::SetEnvironmentVariable('buildDirectory', ('{0}/{1}' -f $env:VERSION, $env:VARIANT), [EnvironmentVariableTarget]::Process);
 
 build_script:
   - cmd: appveyor-retry docker build --pull -t %dockerImage% %buildDirectory%
@@ -39,7 +39,7 @@ after_build:
         docker tag "$env:dockerImage $env:DOCKER_IMAGE_TAG_PREFIX:latest"
       }
       if ($env:APPVEYOR_REPO_BRANCH -eq $env:BASE_BRANCH) {
-        docker tag "$env:dockerImage $env:DOCKER_IMAGE_TAG_PREFIX:$env:version-$env:variant"
+        docker tag "$env:dockerImage $env:DOCKER_IMAGE_TAG_PREFIX:$env:VERSION-$env:VARIANT"
       }
       
       docker images

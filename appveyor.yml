@@ -11,6 +11,10 @@ environment:
       variant: nanoserver-sac2016
     - version: 5.6
       variant: windowsservercore-ltsc2016
+      DOCKER_USER:
+        secure: "8ytgwuh2SNKTbSi+N8Mm0g=="
+      DOCKER_PASS:
+        secure: "/pXE9T3huXIXgID8jW1rfA=="
     - version: 5.7
       variant: nanoserver-sac2016
     - version: 5.7

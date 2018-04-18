@@ -18,7 +18,7 @@ environment:
   DOCKER_PASS:
     secure: /pXE9T3huXIXgID8jW1rfA==
   DOCKER_IMAGE_TAG_PREFIX: rafaelpdes/mysql
-  latest: 5.7.21-nanoserver-sac2016
+  latest: 5.6.39-nanoserver-sac2016
 
 install:
   - ps: |

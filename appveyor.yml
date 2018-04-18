@@ -2,6 +2,10 @@ version: build-{build}.{branch}
 image: Visual Studio 2017
 
 environment:
+  DOCKER_USER:
+    secure: 8ytgwuh2SNKTbSi+N8Mm0g==
+  DOCKER_PASS:
+    secure: /pXE9T3huXIXgID8jW1rfA==
   matrix:
     - version: 5.6
       variant: nanoserver-sac2016
@@ -25,3 +29,7 @@ after_build:
 
 test_script:
   - cmd: docker run --rm %dockerImage% MySQL --version
+
+deploy_script:
+  - docker login -u="$env:DOCKER_USER" -p="$env:DOCKER_PASS"
+  - docker push rafaelpdes/mysql

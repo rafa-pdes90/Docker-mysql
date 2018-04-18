@@ -22,19 +22,19 @@ ARG mysql_download_url="https://dev.mysql.com/get/Downloads/MySQL-5.6/mysql-5.6.
 # "https://www.microsoft.com/en-us/download/confirmation.aspx?id=26999&6B49FDFB-8E5B-4B07-BC31-15695C5A2143=1"
 # Reload that page and a prompt to re-select the vcredist version will be shown, along with a "click here to download manually" link
 # (Also the download will restart. Again, you may cancel it) Copy that link and put it here:
-ARG vcredist_x86_download_url="https://download.microsoft.com/download/1/6/5/165255E7-1014-4D0A-B094-B6A430A6BFFC/vcredist_x86.exe"
+ARG vcredist_x64_download_url="https://download.microsoft.com/download/1/6/5/165255E7-1014-4D0A-B094-B6A430A6BFFC/vcredist_x64.exe"
 
 RUN powershell -Command \
   $ErrorActionPreference = 'Stop' ; \
   $ProgressPreference = 'SilentlyContinue' ; \
-  Invoke-WebRequest -Uri $vcredist_x86_download_url -OutFile c:\vcredist_x86.exe ; \
-  Start-Process -FilePath 'c:\vcredist_x86.exe' -ArgumentList '/q /norestart' -Wait ; \
-  Remove-Item c:\vcredist_x86.exe -Force
+  Invoke-WebRequest -Uri $env:vcredist_x64_download_url -OutFile c:\vcredist_x64.exe ; \
+  Start-Process -FilePath 'c:\vcredist_x64.exe' -ArgumentList '/q /norestart' -Wait ; \
+  Remove-Item c:\vcredist_x64.exe -Force
 
 RUN powershell -Command \
   $ErrorActionPreference = 'Stop' ; \
   $ProgressPreference = 'SilentlyContinue' ; \
-  Invoke-WebRequest -Uri $mysql_download_url -OutFile c:\mysql.zip ; \
+  Invoke-WebRequest -Uri $env:mysql_download_url -OutFile c:\mysql.zip ; \
   Expand-Archive -Path 'c:\mysql.zip' -DestinationPath 'c:\' ; \
   Rename-Item -Path 'c:\mysql-5.6.39-winx64' -NewName 'c:\mysql' ; \
   Remove-Item -Path 'c:\mysql.zip' -Force
@@ -52,15 +52,15 @@ SHELL ["powershell", "-Command", "$ErrorActionPreference = 'Stop';"]
 
 COPY InitializeDatabase.ps1 .
 ENTRYPOINT .\\InitializeDatabase.ps1 -Verbose \
-  -MYSQL_ROOT_PASSWORD $MYSQL_ROOT_PASSWORD \
-  -MYSQL_ROOT_HOST $MYSQL_ROOT_HOST \
-  -MYSQL_DATABASE $MYSQL_DATABASE \
-  -MYSQL_USER $MYSQL_USER \
-  -MYSQL_PASSWORD $MYSQL_PASSWORD \
-  -MYSQL_ALLOW_EMPTY_PASSWORD $MYSQL_ALLOW_EMPTY_PASSWORD \
-  -MYSQL_RANDOM_ROOT_PASSWORD $MYSQL_RANDOM_ROOT_PASSWORD \
-  -MYSQL_ONETIME_PASSWORD $MYSQL_ONETIME_PASSWORD \
-  -DOCKER_NEW_RUN $DOCKER_NEW_RUN;
+  -MYSQL_ROOT_PASSWORD $env:MYSQL_ROOT_PASSWORD \
+  -MYSQL_ROOT_HOST $env:MYSQL_ROOT_HOST \
+  -MYSQL_DATABASE $env:MYSQL_DATABASE \
+  -MYSQL_USER $env:MYSQL_USER \
+  -MYSQL_PASSWORD $env:MYSQL_PASSWORD \
+  -MYSQL_ALLOW_EMPTY_PASSWORD $env:MYSQL_ALLOW_EMPTY_PASSWORD \
+  -MYSQL_RANDOM_ROOT_PASSWORD $env:MYSQL_RANDOM_ROOT_PASSWORD \
+  -MYSQL_ONETIME_PASSWORD $env:MYSQL_ONETIME_PASSWORD \
+  -DOCKER_NEW_RUN $env:DOCKER_NEW_RUN;
 
 EXPOSE 3306
 CMD ["MySQL", "--user=root", "-p"]

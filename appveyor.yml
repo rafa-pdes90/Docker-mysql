@@ -12,19 +12,20 @@ environment:
   DOCKER_PASS:
     secure: /pXE9T3huXIXgID8jW1rfA==
   DOCKER_IMAGE_TAG_PREFIX: rafaelpdes/mysql
-  LATEST: 5.7.21-nanoserver-sac2016
+  BASE_BRANCH: master
+  BASE_LATEST: 5.7.21-nanoserver-sac2016
 
 install:
   - ps: |
       $DOCKER_IMAGE_TAG_SUFFIX = $null
-      if ($env:APPVEYOR_REPO_BRANCH -eq "master") {
-        $DOCKER_IMAGE_TAG_SUFFIX = $env:LATEST
+      if ($env:APPVEYOR_REPO_BRANCH -eq $env:BASE_BRANCH) {
+        $DOCKER_IMAGE_TAG_SUFFIX = $env:BASE_LATEST
       } else {
         $DOCKER_IMAGE_TAG_SUFFIX = $env:APPVEYOR_REPO_BRANCH
       }
       
-      $v1,$v2,$release,$variant = $DOCKER_IMAGE_TAG_SUFFIX.Split('.').Split('-', 2)
-      $version = "$v1.$v2"
+      $v1,$v2,$env:release,$env:variant = $DOCKER_IMAGE_TAG_SUFFIX.Split('.').Split('-', 2)
+      $env:version = "$v1.$v2"
       
       [Environment]::SetEnvironmentVariable('dockerImage', ('{0}:{1}' -f $env:DOCKER_IMAGE_TAG_PREFIX, $DOCKER_IMAGE_TAG_SUFFIX), [EnvironmentVariableTarget]::Process);
       [Environment]::SetEnvironmentVariable('buildDirectory', ('{0}/{1}' -f $version, $variant), [EnvironmentVariableTarget]::Process);
@@ -37,6 +38,10 @@ after_build:
       if ($env:APPVEYOR_REPO_BRANCH -eq "master") {
         docker tag "$env:dockerImage $env:DOCKER_IMAGE_TAG_PREFIX:latest"
       }
+      if ($env:APPVEYOR_REPO_BRANCH -eq $env:BASE_BRANCH) {
+        docker tag "$env:dockerImage $env:DOCKER_IMAGE_TAG_PREFIX:$env:version-$env:variant"
+      }
+      
       docker images
 
 test_script:

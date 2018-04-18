@@ -17,9 +17,8 @@ environment:
 install:
   - ps: |
       $DOCKER_IMAGE_TAG_SUFFIX = $null
-      echo "$env:APPVEYOR_REPO_BRANCH"
       if ($env:APPVEYOR_REPO_BRANCH -eq "master") {
-        $DOCKER_IMAGE_TAG_SUFFIX = $env.LATEST
+        $DOCKER_IMAGE_TAG_SUFFIX = $env:LATEST
       } else {
         $DOCKER_IMAGE_TAG_SUFFIX = $env:APPVEYOR_REPO_BRANCH
       }

@@ -37,6 +37,8 @@ after_build:
   - ps: |
       if ($env:APPVEYOR_REPO_BRANCH -eq "master") {
         docker tag "$env:dockerImage" "$($env:DOCKER_IMAGE_TAG_PREFIX):latest"
+      }
+      if ($env:BASE_BRANCH -eq "master") {
         docker tag "$env:dockerImage" "$($env:DOCKER_IMAGE_TAG_PREFIX):$env:VARIANT"
       }
       if ($env:APPVEYOR_REPO_BRANCH -eq $env:BASE_BRANCH) {

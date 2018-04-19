@@ -38,6 +38,9 @@ param(
 )
 
 function Load-Init {
+  [CmdletBinding()]
+  Param()
+  
   $sqlcmd = ""
 
   if ($MYSQL_ROOT_HOST -And $MYSQL_ROOT_HOST -ne "localhost") {
@@ -71,6 +74,9 @@ function Load-Init {
 }
 
 function Load-Extra {
+  [CmdletBinding()]
+  Param()
+  
   $sqlcmd = ""
 
   Get-ChildItem -Path .\\docker-entrypoint-initdb.d\* -Include *ps1, *.sql | Foreach-Object -Process {
@@ -110,8 +116,8 @@ if ((Test-Path 'c:\mysql\data\*') -eq $false) {
     Write-Verbose "GENERATED ROOT PASSWORD: $($MYSQL_ROOT_PASSWORD)"
   }
   
-  $sqlcmd = Load-Init
-  $sqlcmd += Load-Extra
+  $sqlcmd = Load-Init -ErrorAction Continue
+  $sqlcmd += Load-Extra -ErrorAction Continue
 
   if ($MYSQL_ROOT_PASSWORD){
     $sqlcmd += "SET PASSWORD FOR 'root'@'localhost' = PASSWORD('" + $MYSQL_ROOT_PASSWORD + "'); "
@@ -141,9 +147,9 @@ else {
   $sqlcmd = ""
   
   if ($DOCKER_NEW_RUN -eq "yes" -And (Test-Path 'c:\firstrun') -eq $false) {
-    $sqlcmd += Load-Init
+    $sqlcmd += Load-Init -ErrorAction Continue
   }
-  $sqlcmd += Load-Extra
+  $sqlcmd += Load-Extra -ErrorAction Continue
   
   if ($sqlcmd){
     MySQL --user=root -p -e $sqlcmd

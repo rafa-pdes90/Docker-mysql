@@ -13,6 +13,7 @@ environment:
     secure: /pXE9T3huXIXgID8jW1rfA==
   DOCKER_IMAGE_TAG_PREFIX: rafaelpdes/mysql
   BASE_BRANCH: master
+  BASE_RELEASE: 21
   BASE_LATEST: 5.7.21-nanoserver-sac2016
 
 install:
@@ -35,13 +36,20 @@ build_script:
 
 after_build:
   - ps: |
-      if ($env:APPVEYOR_REPO_BRANCH -eq "master") {
-        docker tag "$env:dockerImage" "$($env:DOCKER_IMAGE_TAG_PREFIX):latest"
-      }
       if ($env:BASE_BRANCH -eq "master") {
         docker tag "$env:dockerImage" "$($env:DOCKER_IMAGE_TAG_PREFIX):$env:VARIANT"
       }
       if ($env:APPVEYOR_REPO_BRANCH -eq $env:BASE_BRANCH) {
+        if ($env:APPVEYOR_REPO_BRANCH -eq "master") {
+          docker tag "$env:dockerImage" "$($env:DOCKER_IMAGE_TAG_PREFIX):latest"
+          docker tag "$env:dockerImage" "$($env:DOCKER_IMAGE_TAG_PREFIX):$env:VERSION"
+        } else {
+          docker tag "$env:dockerImage" "$($env:DOCKER_IMAGE_TAG_PREFIX):$env:APPVEYOR_REPO_BRANCH"
+        }
+        
+        docker tag "$env:dockerImage" "$($env:DOCKER_IMAGE_TAG_PREFIX):$env:VERSION.$env:RELEASE"
+      }
+      if ($env:RELEASE -eq $env:BASE_RELEASE) {
         docker tag "$env:dockerImage" "$($env:DOCKER_IMAGE_TAG_PREFIX):$env:VERSION-$env:VARIANT"
       }
       

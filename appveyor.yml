@@ -12,9 +12,9 @@ environment:
   DOCKER_PASS:
     secure: /pXE9T3huXIXgID8jW1rfA==
   DOCKER_IMAGE_TAG_PREFIX: rafaelpdes/mysql
-  BASE_BRANCH: master
-  BASE_RELEASE: 21
-  BASE_LATEST: 5.7.21-nanoserver-sac2016
+  BASE_BRANCH: 5.6
+  BASE_RELEASE: 39
+  BASE_LATEST: 5.6.39-nanoserver-sac2016
 
 install:
   - ps: |

@@ -152,7 +152,7 @@ else {
   $sqlcmd += Load-Extra -ErrorAction Continue
   
   if ($sqlcmd){
-    MySQL --user=root -p -e $sqlcmd
+    MySQL --user=root --password=$MYSQL_ROOT_PASSWORD -e $sqlcmd
   }
 }
 
